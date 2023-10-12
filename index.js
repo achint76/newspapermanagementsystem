@@ -1,5 +1,12 @@
+const path = require('path');
 const express = require('express');
 const app = express();
+//builtin middleware
+//console.log(__dirname);
+console.log(path.join(__dirname, "/public"));
+const staticPath = path.join(__dirname, "/public");
+app.use(express.static(staticPath))
+
 const RouterUser = require('./router/userRouter');
 const RouterSignup = require('./router/signupRouter');
 const RouterLogin = require('./router/loginRouter');

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Email Sending Form</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+    <h1>Email Sending Form</h1>
+
+    <form id="emailForm">
+        <label for="to">Recipient's Email:</label>
+        <input type="email" id="to" name="email" required><br>
+        <button type="submit">Send Email</button>
+    </form>
+
+    <script>
+        document.getElementById('emailForm').addEventListener('submit', async function (event) {
+            event.preventDefault(); // Prevent the default form submission behavior
+
+            const email = document.getElementById('to').value;
+            const data = { email };
+
+            try {
+                const response = await fetch('/user/forgot-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                if (response.ok) {
+                    const responseData = await response.json();
+                    // Handle the response data as an object
+                    console.log(responseData);
+                } else {
+                    console.error('Email not sent');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    </script>
+</body>
+</html>
