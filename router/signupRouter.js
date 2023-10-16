@@ -3,7 +3,7 @@ const RouterSignup = express.Router();
 const signupController = require('../controller/signupController');
 const signupMiddleware = require('../middleware/signupMiddleware');
 
-RouterSignup.post('/signup', [signupMiddleware.validateEmail], 
+RouterSignup.post('/signup', [signupMiddleware.validateEmail, signupMiddleware.emailpasswordvalidation, signupMiddleware.passwordvalidation], 
  signupController.signupfunc);
 // 
 module.exports = RouterSignup;
