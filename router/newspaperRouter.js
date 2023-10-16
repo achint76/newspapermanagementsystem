@@ -7,6 +7,8 @@ const upload = require('../middleware/newspapermiddleware')
 RouterNewspaper.post('/upload',upload, newspaperController.handleFileUpload);
 RouterNewspaper.get('/getfile',newspaperController.getPDF);
 //RouterNewspaper.get('/getfile', newspaperController.getPDF);
+RouterNewspaper.put('/updatefile/:id',upload, newspaperController.updatePDF);
+RouterNewspaper.delete('/deletefile/:id', newspaperController.deletePDF);
 
 module.exports = RouterNewspaper;
    
