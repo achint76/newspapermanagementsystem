@@ -37,6 +37,8 @@ const sendResetPasswordMail = async(email, token)=>{
 
 module.exports = {
     forgotpassword: async function(req,res){
+
+      if(req.userdata.user_type == "admin" || req.userdata.user_type == "sub-admin"){
        const email = req.body.email;
        try {
         const isEmailValid = await userService.isEmailValid({email});
@@ -56,6 +58,10 @@ module.exports = {
         // Handle any errors thrown by the validateEmail function
         res.status(400).json({ message: error.message });
       }
+    }
+    else{
+      res.status(400).send("Unauthorized admin or sub-admin");
+    }
     },
    
        

@@ -5,6 +5,7 @@ const sessionService = require('../service/sessionService')
 const { Op } = require('sequelize');
 module.exports = {
     createUser: async function(req,res){
+        if(req.userdata.user_type == "admin"){
         const data = req.body;
         const user = await userService.createUser({
             name: data.name,
@@ -13,6 +14,8 @@ module.exports = {
             user_type: data.user_type
         });
         res.json({message: 'user created', data: user})
+    }   else
+    res.status(400).send('failed to create user');
     },
     getUser: async function(req,res){
         const user = await userService.getUser();
@@ -22,12 +25,16 @@ module.exports = {
         });
     },
     deleteUser: async function(req,res){
+        if(req.userdata.user_type == "admin" || req.userdata.user_type == "sub-admin"){
         const uid = req.params.id;
         const user = await userService.deleteUser({
             id: uid
         });
         console.log(user,"USERUSERUSER");
         res.json({message: 'User deleted', data: user})
+    }
+    else
+    res.status(400).send("failed to delete as only uadmin and sub-admin can do");
     },
     updateUser: async function(req,res){
       // console.log(userdata,"USERDATA:");

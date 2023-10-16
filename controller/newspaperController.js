@@ -26,7 +26,7 @@ const fs = require('fs');
 const models = require('../models')
 const upload = require('../middleware/newspapermiddleware');
 const handleFileUpload =async(req,res)=>{
-    if (req.file) {
+    if (req.file && (req.userdata.user_type == "admin" || req.userdata.user_type == "sub-admin")) {
         const pdfPath = req.file.path;
         const data = req.body;
         const uploadpdf = await models.Newspaper.create({
@@ -55,6 +55,7 @@ const getPDF = async(req,res)=>{
         //console.log(req.text,"AAAAAAAAAAAAAAA");
         //const data = req.body;
        // console.log("DATADATADATA", data.title);
+       if(req.userdata.user_type == "admin" || req.userdata.user_type == "sub-admin"){
         const getpdf = await models.Newspaper.findAll();
             // title: data.title,
             // description: data.description,
@@ -62,12 +63,15 @@ const getPDF = async(req,res)=>{
             // pdf: pdfPath 
         //})
         res.json({message: 'pdf created', data: getpdf})
+       }
+       else
+       res.status(400).send("Unauthorized admin or sub-admin");
    // })
     
 };
 
 const updatePDF = async(req,res)=>{
-    if(req.file){
+    if (req.file && (req.userdata.user_type == "admin" || req.userdata.user_type == "sub-admin")) {
         const uid = req.params.id;
         const pdfPath = req.file.path;
         const data = req.body;
@@ -111,6 +115,7 @@ const updatePDF = async(req,res)=>{
 // res.status(400).send('file deletion failed');
 // }
 const deletePDF = async (req, res) => {
+    if (req.file && (req.userdata.user_type == "admin" || req.userdata.user_type == "sub-admin")) {
     try {
         const { id } = req.params; // Extract the ID from the request parameters
 
@@ -143,6 +148,8 @@ const deletePDF = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: 'Failed to delete newspaper', error: error.message });
     }
+}else
+res.status(400).send("Unauthorized admin or sub-admin");
 };
 module.exports = {
     handleFileUpload,

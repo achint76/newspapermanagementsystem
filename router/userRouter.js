@@ -4,7 +4,7 @@ const loginMiddleware = require('../middleware/loginmidddleware')
 const RouterUser = express.Router();
 RouterUser.get('/get-user', userController.getUser);
 
-RouterUser.post('/add-user', userController.createUser);
+RouterUser.post('/add-user',loginMiddleware.userProfile, userController.createUser);
 
 RouterUser.put('/update-user/:id', loginMiddleware.userProfile, userController.updateUser);
 
