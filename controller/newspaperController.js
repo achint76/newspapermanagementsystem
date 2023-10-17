@@ -115,7 +115,7 @@ const updatePDF = async(req,res)=>{
 // res.status(400).send('file deletion failed');
 // }
 const deletePDF = async (req, res) => {
-    if (req.file && (req.userdata.user_type == "admin" || req.userdata.user_type == "sub-admin")) {
+    if (req.userdata.user_type == "admin" || req.userdata.user_type == "sub-admin"){
     try {
         const { id } = req.params; // Extract the ID from the request parameters
 

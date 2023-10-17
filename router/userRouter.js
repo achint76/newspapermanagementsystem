@@ -2,7 +2,7 @@ const express = require('express');
 const userController = require('../controller/userController');
 const loginMiddleware = require('../middleware/loginmidddleware')
 const RouterUser = express.Router();
-RouterUser.get('/get-user', userController.getUser);
+RouterUser.get('/get-user', loginMiddleware.userProfile,userController.getUser);
 
 RouterUser.post('/add-user',loginMiddleware.userProfile, userController.createUser);
 

@@ -12,7 +12,15 @@ const storage = multer.diskStorage({
     },
 });
 
+const fileFilter =function(req,file,cb){
+    if(file.mimetype === 'application/pdf'){
+        cb(null, true)
+    }else{
+        cb(new Error('Invalid file type. Only PDF files are allowed.'));
+    }
+};
+
 // Create a multer instance for single file uploads
-const upload = multer({ storage: storage }).single('pdf'); // 'pdf' should match the input field name
+const upload = multer({ storage: storage, fileFilter: fileFilter }).single('pdf'); // 'pdf' should match the input field name
 
 module.exports = upload;

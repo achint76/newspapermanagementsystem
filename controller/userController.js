@@ -5,33 +5,78 @@ const sessionService = require('../service/sessionService')
 const { Op } = require('sequelize');
 module.exports = {
     createUser: async function(req,res){
+        
         if(req.userdata.user_type == "admin"){
-        const data = req.body;
-        const user = await userService.createUser({
-            name: data.name,
-            email: data.email,
-            password: data.password,
-            user_type: data.user_type
-        });
-        res.json({message: 'user created', data: user})
-    }   else
-    res.status(400).send('failed to create user');
-    },
+            try{
+            const jwt = req.headers["authorization"];
+            const authData = jwtService.verifyToken(jwt);
+            const data = req.body;
+            const user= await userService.createUser({
+                name: data.name,
+                email: data.email,
+                password: data.password,
+                user_type: data.user_type
+            })
+            res.json({message: 'user created', data: user})
+            }catch(error){
+                console.log(error,"<----error");
+                res.status(500).json({
+                    message: `error coming !!!!!`,
+                    err: error,
+                });
+            }
+        }
+            else{
+             res.status(400).send("Unauthorized admin or sub-admin");
+
+            }
+        }
+
+       
+    ,
     getUser: async function(req,res){
-        const user = await userService.getUser();
+        if(req.userdata.user_type == "admin" || req.userdata.user_type == "sub-admin"){
+            try{
+            const jwt = req.headers["authorization"];
+            const authData = jwtService.verifyToken(jwt);
+            const user = await userService.getUser();
         res.json({
             message: 'All Users',
             data: user
         });
+            } catch(error){
+                console.log(error,"<----error");
+                res.status(500).json({
+                    message: `error coming !!!!!`,
+                    err: error,
+                });
+            }
+        }else{
+            res.status(400).send("Unauthorized admin or sub-admin")
+        }
+        
     },
     deleteUser: async function(req,res){
         if(req.userdata.user_type == "admin" || req.userdata.user_type == "sub-admin"){
-        const uid = req.params.id;
-        const user = await userService.deleteUser({
+            try{
+            const jwt = req.headers["authorization"];
+            const authData = jwtService.verifyToken(jwt); 
+            const uid = req.params.id;
+            const user = await userService.deleteUser({
             id: uid
         });
         console.log(user,"USERUSERUSER");
         res.json({message: 'User deleted', data: user})
+            }catch(error){
+                console.log(error,"<----error");
+                res.status(500).json({
+                    message: `error coming !!!!!`,
+                    err: error,
+                });
+            }
+        
+        
+        
     }
     else
     res.status(400).send("failed to delete as only uadmin and sub-admin can do");
@@ -40,7 +85,10 @@ module.exports = {
       // console.log(userdata,"USERDATA:");
         console.log(req.userdata,"REQ>USERDATA");
          if(req.userdata.user_type == "admin"){
-            const uid = req.params.id;
+            try{
+                const jwt = req.headers["authorization"];
+                const authData = jwtService.verifyToken(jwt); 
+                const uid = req.params.id;
         const updatedData = req.body;
         console.log(uid,"UID::::");
         console.log(updatedData,"UPDATEDDATA ISDDDDDDDD");
@@ -49,6 +97,17 @@ module.exports = {
         res.json({ message: user.message });
         else
         res.status(404).json({ message: user.message });
+            }catch(error){
+                console.log(error,"<----error");
+                res.status(500).json({
+                    message: `error coming !!!!!`,
+                    err: error,
+                });
+            }
+        
+        
+         }else{
+            res.status(400).send("Unauthorised admin or sub-admin");
          }
     },
 
