@@ -5,8 +5,8 @@ const app = express();
 const newspaperController = require('./controller/newspaperController')
 //builtin middleware
 //console.log(__dirname);
-console.log(path.join(__dirname, "/public"));
 const staticPath = path.join(__dirname, "/public");
+console.log(staticPath);
 app.use(express.static(staticPath));
 
 console.log(path.join(__dirname, "/uploads"));
@@ -17,13 +17,15 @@ app.use(express.static(pathStatic));
 const pathStaticsec = path.join(__dirname, "/uploadmagazines");
 app.use(express.static(pathStaticsec)); 
 
+
+
 const RouterUser = require('./router/userRouter');
 const RouterSignup = require('./router/signupRouter');
 const RouterLogin = require('./router/loginRouter');
 const RouterLogout = require('./router/userRouter');
 const RouterForgot = require('./router/forgotpasswordRouter');
 
-const RouterNewspaper = require('./router/newspaperRouter')
+const RouterNewspaper = require('./router/newspaperRouter');
 const RouterMagazine = require('./router/magazineRouter');
 app.use(express.json());
 app.use(cors({
@@ -33,14 +35,10 @@ app.use(cors({
 // Your other routes and middleware go here
 
 // Start your Express app
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
 
-app.get('/', (req,res) => {
+app.get('/user/forgot-password', (req,res) => {
   console.log("get response");
-  res.send('API is running...');
+  res.sendFile(path.join(__dirname,"public/index.html"));
 })
 
 app.use('/user', RouterUser);

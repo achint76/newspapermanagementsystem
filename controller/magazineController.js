@@ -3,16 +3,24 @@ const fs = require('fs');
 const models = require('../models')
 const upload = require('../middleware/newspapermiddleware');
 const { Op } = require('sequelize');
+//const path = 'uploads/pdf-1697450320438.pdf'; // Replace this with the path from your database
+//const url = baseURL + path;
+const baseURL = 'http://localhost:3004/';
 
 const handleMagazineUpload =async(req,res)=>{
     if (req.file && (req.userdata.user_type == "admin" || req.userdata.user_type == "sub-admin")) {
-        const pdfPath = req.file.path;
+        const pdfPath = req.file.filename;
+        console.log(req.file.path,"REQFILEPATH");
+        console.log(req.file,"REQFILE");
+        console.log(req.path,"REQPATH");
+        const url = baseURL+pdfPath;
+        console.log(pdfPath,"TTTTTTTTTT");
         const data = req.body;
         const uploadpdf = await models.Magazine.create({
             title: data.title,
             description: data.description,
             publish_date: data.publish_date,
-            pdf: pdfPath,
+            pdf: url,
         });
         res.json({ message: 'magazine pdf created', data: uploadpdf });
     } else {
@@ -50,13 +58,17 @@ const updateMagazinePDF = async(req,res)=>{
             title: data.title,
             description: data.description,
             publish_date: data.publish_date,
-            pdf: pdfPath
+            pdf: baseURL+pdfPath
         }, {
             where :{
                 id: uid
             }
         });
+        if(updatedata != 0)
+        console.log(updatedata,"UPDATEDATA");
         res.json({message: 'updated', data: updatedata});
+        if(updatedata == 0)
+        res.json({message: "not updated"});
     }
     else
     
@@ -81,8 +93,11 @@ const deleteMagazinePDF = async (req, res) => {
         }
 
         // Get the PDF file path from the newspaper object
+        
         const pdfPath = magazine.pdf;
-
+        const urlparts = pdfPath.split('/');
+        const fileName = urlparts[urlparts.length - 1];
+        const filepath = `uploadmagazines/${fileName}`
         // Delete the newspaper from the database
         const deleted = await models.Magazine.destroy({
             where: { id },
@@ -90,7 +105,7 @@ const deleteMagazinePDF = async (req, res) => {
 
         if (deleted === 1) {
             // Newspaper deleted successfully, now delete the associated PDF file
-            fs.unlink(pdfPath, (err) => {
+            fs.unlink(filepath, (err) => {
                 if (err) {
                     return res.status(500).json({ message: 'Error deleting PDF file', error: err.message });
                 }
@@ -123,8 +138,15 @@ const getMagazinePDFbydate = async (req, res) => {
                 },
                 
             });
+            if (getpdf.length == 0) {
+                return res.status(400).send({ message: 'No data found' });
+            }
+            
              console.log("DATA ISSSSSSSS", getpdf);
+             if(getpdf)
             res.json({ message: 'Magazine pdf info for the specified date', data: getpdf });
+        // else
+        // res.json({message: "no data found"});
         } catch (error) {
             res.status(500).json({ message: 'Error fetching magazine data', error: error.message });
         }

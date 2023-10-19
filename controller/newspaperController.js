@@ -25,15 +25,17 @@
 const fs = require('fs');
 const models = require('../models')
 const upload = require('../middleware/newspapermiddleware');
+const baseURL = 'http://localhost:3004/';
 const handleFileUpload =async(req,res)=>{
     if (req.file && (req.userdata.user_type == "admin" || req.userdata.user_type == "sub-admin")) {
-        const pdfPath = req.file.path;
+        const pdfPath = req.file.filename;
+        console.log(pdfPath,"TTTTTTTTTT");
         const data = req.body;
         const uploadpdf = await models.Newspaper.create({
             title: data.title,
             description: data.description,
             publish_date: data.publish_date,
-            pdf: pdfPath,
+            pdf: baseURL+pdfPath,
         });
         res.json({ message: 'pdf created', data: uploadpdf });
     } else {
@@ -73,19 +75,23 @@ const getPDF = async(req,res)=>{
 const updatePDF = async(req,res)=>{
     if (req.file && (req.userdata.user_type == "admin" || req.userdata.user_type == "sub-admin")) {
         const uid = req.params.id;
-        const pdfPath = req.file.path;
+        const pdfPath = req.file.filename;
         const data = req.body;
         const updatedata = await models.Newspaper.update({
             title: data.title,
             description: data.description,
             publish_date: data.publish_date,
-            pdf: pdfPath
+            pdf: baseURL+pdfPath
         }, {
             where :{
                 id: uid
             }
         });
+        if(updatedata != 0)
+        console.log(updatedata,"UPDATEDATA");
         res.json({message: 'updated', data: updatedata});
+        if(updatedata == 0)
+        res.json({message: "not updated"});
     }
     else
     
@@ -128,15 +134,18 @@ const deletePDF = async (req, res) => {
 
         // Get the PDF file path from the newspaper object
         const pdfPath = newspaper.pdf;
+        const urlparts = pdfPath.split('/');
+        const fileName = urlparts[urlparts.length - 1];
+        const filepath = `uploads/${fileName}`
 
         // Delete the newspaper from the database
         const deleted = await models.Newspaper.destroy({
-            where: { id },
+            where: { id: id},
         });
 
         if (deleted === 1) {
             // Newspaper deleted successfully, now delete the associated PDF file
-            fs.unlink(pdfPath, (err) => {
+            fs.unlink(filepath, (err) => {
                 if (err) {
                     return res.status(500).json({ message: 'Error deleting PDF file', error: err.message });
                 }
