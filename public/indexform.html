@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Password Reset</title>
-    <link rel="stylesheet" type="text/css" href="/css/styleform.css">
+    <link rel="stylesheet" type="text/css" href="css/styleform.css">
 
 </head>
 <body>
@@ -24,13 +24,38 @@
 
             const newPassword = document.getElementById('newPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
-
+            const token = window.location.search;
+            console.log(token,"tOKEN");
             if (newPassword !== confirmPassword) {
                 alert('New Password and Confirm Password must match.');
             } else {
                 // Proceed with password reset logic
                 // You can use JavaScript to send a request to your backend for password reset
                 // Example: fetch('/user/reset-password', { method: 'POST', body: JSON.stringify({ newPassword }) });
+                const data = {
+            newPassword: newPassword,
+            confirmPassword: confirmPassword
+            };
+                try {
+                const response = await fetch('http://localhost:3004/user/reset-password' + token, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+                console.log(response,"response...........");
+                if (response.ok) {
+                    const responseData = await response.json();
+                    // Handle the response data as an object
+                    console.log(responseData);
+                } 
+                // else {
+                //     console.error('Email not sent');
+                // }
+            } catch (error) {
+                console.error('Error:', error);
+            }
             }
         });
     </script>

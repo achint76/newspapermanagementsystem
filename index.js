@@ -27,6 +27,9 @@ const RouterForgot = require('./router/forgotpasswordRouter');
 
 const RouterNewspaper = require('./router/newspaperRouter');
 const RouterMagazine = require('./router/magazineRouter');
+
+const Routerpasswordreset = require('./router/resetpasswordRouter');
+
 app.use(express.json());
 app.use(cors({
   origin: '*',
@@ -41,6 +44,15 @@ app.get('/user/forgot-password', (req,res) => {
   res.sendFile(path.join(__dirname,"public/index.html"));
 })
 
+app.get('/user/reset-password', (req,res)=>{
+  const token = req.query.token;
+  if(token){
+    res.sendFile(path.join(__dirname,"public/indexform.html"));
+  }else{
+    res.status(400).send('Invalid or expired token.');
+  }
+})
+
 app.use('/user', RouterUser);
 app.use('/user', RouterLogin);
 app.use('/user', RouterSignup);
@@ -48,6 +60,8 @@ app.use('/user', RouterLogout);
 app.use('/user', RouterForgot);
 app.use('/user', RouterNewspaper);
 app.use('/user', RouterMagazine);
+
+app.use('/user', Routerpasswordreset);
 
 app.listen(3004, () => {
     console.log(`The server is running on 3004`);   
