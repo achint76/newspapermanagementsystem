@@ -9,6 +9,7 @@ const baseURL = 'http://localhost:3004/';
 
 const handleMagazineUpload =async(req,res)=>{
     if (req.file && (req.userdata.user_type == "admin" || req.userdata.user_type == "sub-admin")) {
+        if(req.file.mimetype === 'application/pdf'){
         const pdfPath = req.file.filename;
         console.log(req.file.path,"REQFILEPATH");
         console.log(req.file,"REQFILE");
@@ -23,8 +24,10 @@ const handleMagazineUpload =async(req,res)=>{
             pdf: url,
         });
         res.json({ message: 'magazine pdf created', data: uploadpdf });
+    }else
+    res.status(400).json({message: 'magazine file is not pdf'})
     } else {
-        res.status(500).send('magazine upload failed');
+        res.status(500).send({message: 'magazine upload failed'});
     }
 }
     

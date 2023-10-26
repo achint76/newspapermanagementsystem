@@ -28,6 +28,7 @@ const upload = require('../middleware/newspapermiddleware');
 const baseURL = 'http://localhost:3004/';
 const handleFileUpload =async(req,res)=>{
     if (req.file && (req.userdata.user_type == "admin" || req.userdata.user_type == "sub-admin")) {
+        if(req.file.mimetype === 'application/pdf'){
         const pdfPath = req.file.filename;
         console.log(pdfPath,"TTTTTTTTTT");
         const data = req.body;
@@ -38,8 +39,10 @@ const handleFileUpload =async(req,res)=>{
             pdf: baseURL+pdfPath,
         });
         res.json({ message: 'pdf created', data: uploadpdf });
+    }else
+    res.status(400).json({message: "Newspaper file must be pdf"});
     } else {
-        res.status(500).send('File upload failed');
+        res.status(500).send({message: 'File upload failed'});
     }
 }
     

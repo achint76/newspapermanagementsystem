@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Password Reset</title>
-    <link rel="stylesheet" type="text/css" href="css/styleform.css">
+    <link rel="stylesheet" type="text/css" href="/css/styleform.css">
 
 </head>
 <body>
@@ -37,7 +37,7 @@
             confirmPassword: confirmPassword
             };
                 try {
-                const response = await fetch('http://localhost:3004/user/reset-password' + token, {
+                const response = await fetch('http://localhost:3004/user/reset-password' +token, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

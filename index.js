@@ -40,18 +40,22 @@ app.use(cors({
 // Start your Express app
 
 app.get('/user/forgot-password', (req,res) => {
-  console.log("get response");
+  console.log("get response",res);
   res.sendFile(path.join(__dirname,"public/index.html"));
 })
 
 app.get('/user/reset-password', (req,res)=>{
   const token = req.query.token;
+  console.log(token,"TOKEN:::::::::");
   if(token){
     res.sendFile(path.join(__dirname,"public/indexform.html"));
   }else{
     res.status(400).send('Invalid or expired token.');
   }
 })
+
+
+
 
 app.use('/user', RouterUser);
 app.use('/user', RouterLogin);
